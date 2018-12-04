@@ -24,7 +24,7 @@ public class Ice
 		}
 	}
 
-	// Array of winters from the data set
+	// Array of Winter objects from the data set
 	static Winter[] winters = new Winter[163];
 	// Number of winters in the data set
 	final static double n = winters.length;	
