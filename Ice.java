@@ -3,43 +3,54 @@ import java.util.Random;
 /*
 *
 * Ice class calculates various data figures based on a data set of 
-* years (1855-2017) and their corresponding number of days with ice.
+* Winters.years (1855-2017) and their corresponding number of days with ice.
 *
 * @author Tony Jacobs
 */
 public class Ice
 {
+	// Winter class is an object that holds data for the 
+	// year (1855-2017) and the corresponding number of days with ice.
 	public static class Winter
 	{
 		int year;
-		int ice_days;
+		int iceDays;
 
-		Winter(int year, int ice_days)
+		// Default constructor for creating a Winter object
+		Winter(int year, int iceDays)
 		{
 			this.year = year;
-			this.ice_days = ice_days;
+			this.iceDays = iceDays;
 		}
 	}
 
+	// Array of winters from the data set
 	static Winter[] winters = new Winter[163];
+	// Number of winters in the data set
 	final static double n = winters.length;	
+	// Mean year number from data set
 	static double yearMean = 0;
+	// Mean number of days with ice
 	static double daysMean = 0;
 	
+	// Prints the year and respective number of ice days for each 
+	// winterin the data set.
 	public static void f1_Main()
 	{
 		for (Winter w : winters)
 		{
-			System.out.println(w.year + " " + w.ice_days);
+			System.out.println(w.year + " " + w.iceDays);
 		}
 	}
 
+	// Calculates standard deviation and prints number of winters in data set, 
+	// mean number of ice days, and the standard deviation.
 	public static void f2_Main()
 	{
 		double sd = 0;
 		for (Winter w : winters)
 		{
-			sd += Math.pow((w.ice_days-daysMean),2);
+			sd += Math.pow((w.iceDays-daysMean),2);
 		}
 		sd /= n-1;
 		sd = Math.sqrt(sd);
@@ -49,63 +60,49 @@ public class Ice
 		System.out.println(String.format("%.2f", sd));
 	}
 
+	// Calculates mean squared error (MSE) for given Beta 0 and Beta 1 values.
 	public static double f3_MSE(final double B0, final double B1)
 	{
 		double MSE = 0;
 		for (Winter w : winters)
 		{
-			MSE += Math.pow((B0 + (B1*w.year) - w.ice_days),2);
+			MSE += Math.pow((B0 + (B1*w.year) - w.iceDays),2);
 		}
 		MSE /= n;
 
 		return MSE;
 	}
 
-	public static double f3_Beta0()
-	{
-		return daysMean - f3_Beta1()*yearMean;
-	}
-
-	public static double f3_Beta1()
-	{		
-		double num = 0;
-		for (Winter w : winters)
-		{
-			num += (w.year-yearMean)*(w.ice_days-daysMean);
-		}
-
-		double denom = 0;
-		for (Winter w : winters)
-		{
-			denom += Math.pow(w.year-yearMean,2);
-		}
-		return num/denom;
-	}
-
+	// Calculates gradient descent (GD) for B0 value where the gradient is defined by the
+	// vector of partial derivatives.
 	public static double f4_GD_Beta0(final double B0, final double B1)
 	{
 		double GD = 0;
 		for (Winter w : winters)
 		{
-			GD += (B0 + (B1*w.year) - w.ice_days);
+			GD += (B0 + (B1*w.year) - w.iceDays);
 		}
 		GD *= 2/n;
 
 		return GD;
 	}
 
+	// Calculate gradient descent for B1 value where the gradient is defined by the
+	// vector of partial derivatives.
 	public static double f4_GD_Beta1(final double B0, final double B1)
 	{
 		double GD = 0;
 		for (Winter w : winters)
 		{
-			GD += (B0 + (B1*w.year) - w.ice_days)*w.year;
+			GD += (B0 + (B1*w.year) - w.iceDays)*w.year;
 		}
 		GD *= 2/n;
 
 		return GD;
 	}
 
+	// Calculate gradient descent for B0 value where gradient is defined by the
+	// vector of partial derivatives.
 	public static double f5_GD_Beta0(final double N, final double T)
 	{
 		if (T == 0)
@@ -118,6 +115,7 @@ public class Ice
 		}
 	}
 
+	// Calculates gradient descent for B0 value for T iterations.
 	public static double f5_GD_Beta1(final double N, final double T)
 	{
 		if (T == 0)
@@ -130,6 +128,8 @@ public class Ice
 		}
 	}
 
+	// Main function for FLAG 500.
+	// Prints the B0, B1, and MSE values.
 	public static void f5_Main(final double arg1, final double arg2)
 	{
 		double B0 = 0;
@@ -146,6 +146,32 @@ public class Ice
 		}
 	}
 
+	// Computes B0 value for the closed-form solution using
+	// the ordinary least squared formula in one dimmension.
+	public static double f6_Beta0()
+	{
+		return daysMean - f6_Beta1()*yearMean;
+	}
+
+	// Computes B1 value for the closed-form solution using
+	// the ordinary least squared formula in one dimmension.
+	public static double f6_Beta1()
+	{		
+		double num = 0;
+		for (Winter w : winters)
+		{
+			num += (w.year-yearMean)*(w.iceDays-daysMean);
+		}
+
+		double denom = 0;
+		for (Winter w : winters)
+		{
+			denom += Math.pow(w.year-yearMean,2);
+		}
+		return num/denom;
+	}
+
+	// Calculates MSE with Xi element changed with the stdx addition.
 	public static double f8_MSE(final double B0, final double B1, final double std)
 	{
 		double MSE = 0;
@@ -154,13 +180,14 @@ public class Ice
 		for (Winter w : winters)
 		{
 			xi = (w.year-yearMean)/std;
-			MSE += Math.pow((B0 + (B1*xi) - w.ice_days),2);
+			MSE += Math.pow((B0 + (B1*xi) - w.iceDays),2);
 		}
 		MSE /= n;
 
 		return MSE;
 	}
 
+	// Computes B0 value with Xi element changed with the stdx addition.
 	public static double f8_GD_Beta0(final double B0, final double B1, final double std)
 	{
 		double GD = 0;
@@ -169,13 +196,14 @@ public class Ice
 		for (Winter w : winters)
 		{
 			xi = (w.year-yearMean)/std;
-			GD += (B0 + (B1*xi) - w.ice_days);
+			GD += (B0 + (B1*xi) - w.iceDays);
 		}
 		GD *= 2/n;
 
 		return GD;
 	}
 
+	// Computes B1 value with Xi element changed with the stdx addition.
 	public static double f8_GD_Beta1(final double B0, final double B1, final double std)
 	{
 		double GD = 0;
@@ -184,13 +212,15 @@ public class Ice
 		for (Winter w : winters)
 		{
 			xi = (w.year-yearMean)/std;
-			GD += (B0 + (B1*xi) - w.ice_days)*xi;
+			GD += (B0 + (B1*xi) - w.iceDays)*xi;
 		}
 		GD *= 2/n;
 
 		return GD;
 	}
 
+	// Computes B0 value with Xi element changed with the stdx addition
+	// for T iterations.
 	public static double f8_GD_Beta0T(final double N, final double T, final double std)
 	{
 		if (T == 0)
@@ -203,6 +233,8 @@ public class Ice
 		}
 	}
 
+	// Computes B1 value with Xi element changed with the stdx addition
+	// for T iterations.
 	public static double f8_GD_Beta1T(final double N, final double T, final double std)
 	{
 		if (T == 0)
@@ -215,6 +247,8 @@ public class Ice
 		}
 	}
 
+	// Main function for FLAG 800.
+	// Prints B0, B1, and MSE for T iterations.
 	public static void f8_Main(final double N, final double T)
 	{
 		double std = 0;
@@ -236,6 +270,7 @@ public class Ice
 		}
 	}
 
+	// Computes B0 value using stochastic gradient descent (SGD).
 	public static double f9_GD_Beta0(final double N, final double T, final double std)
 	{
 		Random rand = new Random();
@@ -248,10 +283,11 @@ public class Ice
 		else
 		{
 			xi = (w.year-yearMean)/std;
-			return f9_GD_Beta1(N, T-1, std) - N*2*(f9_GD_Beta0(N, T-1, std) + (f9_GD_Beta1(N, T-1, std)*xi) - w.ice_days);
+			return f9_GD_Beta1(N, T-1, std) - N*2*(f9_GD_Beta0(N, T-1, std) + (f9_GD_Beta1(N, T-1, std)*xi) - w.iceDays);
 		}
 	}
 
+	// Computes B1 value using stochastic gradient descent.
 	public static double f9_GD_Beta1(final double N, final double T, final double std)
 	{
 		Random rand = new Random();
@@ -264,10 +300,12 @@ public class Ice
 		else
 		{
 			xi = (w.year-yearMean)/std;
-			return f9_GD_Beta1(N, T-1, std) - N*2*(f9_GD_Beta0(N, T-1, std) + (f9_GD_Beta1(N, T-1, std)*xi) - w.ice_days)*xi;
+			return f9_GD_Beta1(N, T-1, std) - N*2*(f9_GD_Beta0(N, T-1, std) + (f9_GD_Beta1(N, T-1, std)*xi) - w.iceDays)*xi;
 		}
 	}
 
+	// Main function for FLAG 900.
+	// Prints B0, B1, and MSE values using SGD for T iterations.
 	public static void f9_Main(final double N, final double T)
 	{
 		double std = 0;
@@ -289,6 +327,8 @@ public class Ice
 		}
 	}
 
+	// Determines which function to call based on FLAG
+	// from console input when FLAG is the only input.
 	public static void parseFlag(final int FLAG)
 	{
 		if (FLAG == 100)
@@ -301,22 +341,28 @@ public class Ice
 		}
 		else if (FLAG == 600)
 		{
-			double B1 = f3_Beta1();
-			double B0 = f3_Beta0();
+			double B1 = f6_Beta1();
+			double B0 = f6_Beta0();
 			System.out.println(String.format("%.2f", B0) + " " 
 				+ String.format("%.2f", B1) + " " 
 					+ String.format("%.2f", f3_MSE(B0, B1)));
 		}
 	}
 
+	// Determines which function to call based on FLAG
+	// from console input when the console inputs are FLAG
+	// and arg1.
 	public static void parseFlag(final int FLAG, final double arg1)
 	{
 		if (FLAG == 700)
 		{
-			System.out.println(String.format("%.2f", f3_Beta1()*arg1 + f3_Beta0()));
+			System.out.println(String.format("%.2f", f6_Beta1()*arg1 + f6_Beta0()));
 		}
 	}
 
+	// Determines which function to call based on FLAG
+	// from console input when the console inputs are 
+	// FLAG, arg1, and arg2.
 	public static void parseFlag(final int FLAG, final double arg1, final double arg2)
 	{
 		if (FLAG == 300)
@@ -370,6 +416,9 @@ public class Ice
 		}
 	}
 
+	// Fills an array of Winter objects with years and number of days with 
+	// ice taken from http://www.aos.wisc.edu/~sco/lakes/Mendota-ice.html.
+	// Also sets global mean variables for the data set.
 	public static void initializeArray()
 	{
 		winters[0] = new Winter(1855, 118);
@@ -539,7 +588,7 @@ public class Ice
 		for (Winter w : winters)
 		{
 			yearMean += w.year;
-			daysMean += w.ice_days;
+			daysMean += w.iceDays;
 		}
 		yearMean /= n;
 		daysMean /= n;
