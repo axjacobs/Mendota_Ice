@@ -1,41 +1,41 @@
 # Mendota_Ice
 
-## About
+### About
 Ice is a program that performs calculations on a data set containing information about winters from 1855-2017.
 
-## Input
+### Input
 The command line arguments for Ice should be formatted as: FLAG [arg1 arg2]
 FLAG can be an integer value ranging from 1-900. Arg1 and arg2 are optional and will only be used for certain FLAGs.
 
 ## Definitions
 FLAG == 100:
-### Format
+#### Format
   -java Ice 100
-### Output
+#### Output
   -Prints the year and resulting number of days with ice for each winter in the data set.
   
 FLAG == 200:
-  ### Format
+  #### Format
   -java Ice 200
-  ### Output
+  #### Output
   -Prints n (number of winters in data set), the mean number of days with ice, and the standard deviation.
   
 FLAG == 300:
-  ### Format
+  #### Format
   -java Ice 300 B0 B1
-  ### Input
+  #### Input
   -B0: Beta 0 value.
   -B1: Beta 1 value.
-  ### Output
+  #### Output
   -Prints the mean squared error (MSE) for given Beta0 and Beta1 values.
   
 FLAG == 400:
-  ### Format
+  #### Format
   -java Ice 400 B0 B1
-  ### Input
+  #### Input
   -B0: Beta 0 value.
   -B1: Beta 1 value.
-  ### Output
+  #### Output
   -Prints corresponding gradient to given Beta0 and Beta1 values.
   
 FLAG == 500:
